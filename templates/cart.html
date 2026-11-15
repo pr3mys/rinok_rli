@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Корзина</h2>
+
+{% if cart_items %}
+<div class="card p-3 mb-3">
+    <div class="table-responsive">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr><th>Товар</th><th>Магазин</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for o in cart_items %}
+            <tr>
+                <td>{{ o.goods.name }}</td>
+                <td><a href="{{ url_for('shop_page', shop_id=o.shop_id) }}">{{ o.shop.name }}</a></td>
+                <td>{{ o.quantity }}</td>
+                <td>{{ "%.2f"|format(o.price_at_purchase) }} ₽</td>
+                <td>{{ "%.2f"|format(o.price_at_purchase * o.quantity) }} ₽</td>
+                <td class="text-end">
+                    <form method="POST" action="{{ url_for('cart_remove', order_id=o.id) }}">
+                        <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+{% if not can_checkout %}
+<div class="alert alert-warning">{{ buy_error }}</div>
+{% endif %}
+
+<div class="card p-3">
+    <h6 class="mb-3">Способ получения</h6>
+    <form method="POST" action="{{ url_for('cart_buy') }}" id="checkoutForm">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="delivery_type" value="pickup" id="pickup" checked>
+            <label class="form-check-label" for="pickup">
+                Самовывоз{% if shop and shop.cabinet %} — кабинет {{ shop.cabinet }}{% endif %}
+            </label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="delivery_type" value="delivery" id="delivery">
+            <label class="form-check-label" for="delivery">
+                Доставка{% if shop and shop.delivery_price %} — +{{ "%.2f"|format(shop.delivery_price) }} ₽{% endif %}
+            </label>
+        </div>
+        <div id="deliveryFields" class="row g-2 mt-2" style="display:none;">
+            <div class="col-md-6">
+                <input type="text" name="delivery_cabinet" class="form-control form-control-sm" placeholder="Ваш кабинет">
+            </div>
+            <div class="col-md-6">
+                <input type="text" name="delivery_time" class="form-control form-control-sm" placeholder="Примерное время">
+            </div>
+        </div>
+
+        <hr>
+        <div class="d-flex justify-content-between">
+            <span>Товары:</span>
+            <strong>{{ "%.2f"|format(subtotal) }} ₽</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+            <span>Доставка:</span>
+            <strong id="deliveryLine">0.00 ₽</strong>
+        </div>
+
+        <button type="submit" class="btn btn-dark" {% if not can_checkout %}disabled{% endif %}>Оформить бронь</button>
+        <a href="{{ url_for('showcase') }}" class="btn btn-outline-dark">Продолжить покупки</a>
+    </form>
+</div>
+
+<script>
+(function(){
+    var pickup = document.getElementById("pickup");
+    var delivery = document.getElementById("delivery");
+    var fields = document.getElementById("deliveryFields");
+    var line = document.getElementById("deliveryLine");
+    var price = {{ (shop.delivery_price if shop and shop.delivery_price else 0) }};
+    function refresh() {
+        if (delivery.checked) {
+            fields.style.display = "";
+            line.textContent = price.toFixed(2) + " ₽";
+        } else {
+            fields.style.display = "none";
+            line.textContent = "0.00 ₽";
+        }
+    }
+    pickup.addEventListener("change", refresh);
+    delivery.addEventListener("change", refresh);
+    refresh();
+})();
+</script>
+
+{% else %}
+<div class="alert alert-info">Корзина пуста.</div>
+<a href="{{ url_for('showcase') }}" class="btn btn-dark">На витрину</a>
+{% endif %}
+{% endblock %}

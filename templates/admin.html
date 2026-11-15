@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Админ-панель{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Админ-панель</h2>
+
+<div class="card p-3">
+    <div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>ID</th><th>Логин</th><th>ФИО</th><th>Класс</th><th>Телефон</th><th>Создан</th>
+                <th>Верификация</th><th>Бан продажи</th><th>Бан покупки</th><th>Магазин</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in students %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.login }}</td>
+            <td>{{ s.first_name }} {{ s.last_name }}</td>
+            <td>{{ s.class_name or '—' }}</td>
+            <td><a href="tel:{{ s.phone_number }}">{{ s.phone_number }}</a></td>
+            <td>{{ s.created_at.strftime('%d.%m.%Y') }}</td>
+            <td>{% if s.verification == 1 %}<span class="badge bg-success">Да</span>{% else %}<span class="badge bg-secondary">Нет</span>{% endif %}</td>
+            <td>{% if s.banned_sell %}<span class="badge bg-danger">Бан</span>{% endif %}</td>
+            <td>{% if s.banned_buy %}<span class="badge bg-danger">Бан</span>{% endif %}</td>
+            <td>{% if s.shop %}{{ s.shop.name }}{% else %}—{% endif %}</td>
+            <td class="text-nowrap">
+                <a href="{{ url_for('admin_user', user_id=s.id) }}" class="btn btn-outline-dark btn-sm">Изменить</a>
+                {% if s.verification == 1 %}
+                    <form method="POST" action="{{ url_for('admin_unverify', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-secondary btn-sm">Снять вериф.</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('admin_verify', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-success btn-sm">Верифицировать</button>
+                    </form>
+                {% endif %}
+                {% if s.banned_sell %}
+                    <form method="POST" action="{{ url_for('admin_unban_sell', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-secondary btn-sm">Разбан прод.</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('admin_ban_sell', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-danger btn-sm">Бан прод.</button>
+                    </form>
+                {% endif %}
+                {% if s.banned_buy %}
+                    <form method="POST" action="{{ url_for('admin_unban_buy', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-secondary btn-sm">Разбан пок.</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('admin_ban_buy', user_id=s.id) }}" class="d-inline">
+                        <button class="btn btn-outline-danger btn-sm">Бан пок.</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

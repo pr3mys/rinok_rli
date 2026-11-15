@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Редактирование: {{ student.login }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Пользователь #{{ student.id }} — {{ student.login }}</h2>
+
+<div class="card p-4">
+    <form method="POST" class="row g-2">
+        <div class="col-md-6"><label class="form-label small">Логин</label>
+            <input type="text" name="login" value="{{ student.login }}" class="form-control form-control-sm" required></div>
+        <div class="col-md-6"><label class="form-label small">Телефон</label>
+            <input type="tel" name="phone_number" value="{{ student.phone_number }}" class="form-control form-control-sm" required></div>
+        <div class="col-md-6"><label class="form-label small">Имя</label>
+            <input type="text" name="first_name" value="{{ student.first_name }}" class="form-control form-control-sm" required></div>
+        <div class="col-md-6"><label class="form-label small">Фамилия</label>
+            <input type="text" name="last_name" value="{{ student.last_name }}" class="form-control form-control-sm" required></div>
+        <div class="col-md-6"><label class="form-label small">Класс</label>
+            <input type="text" name="class_name" value="{{ student.class_name or '' }}" class="form-control form-control-sm"></div>
+        <div class="col-12 mt-3">
+            <button class="btn btn-dark btn-sm">Сохранить</button>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-dark btn-sm">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

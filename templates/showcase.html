@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Витрина{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Витрина</h2>
+
+<div class="mb-4">
+    <a href="{{ url_for('showcase', category='все') }}"
+       class="btn btn-sm {{ 'btn-dark' if category == 'все' else 'btn-outline-dark' }} me-1">Все</a>
+    {% for c in categories %}
+        <a href="{{ url_for('showcase', category=c) }}"
+           class="btn btn-sm {{ 'btn-dark' if category == c else 'btn-outline-dark' }} me-1">{{ c|capitalize }}</a>
+    {% endfor %}
+</div>
+
+{% if goods_list %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    {% for g in goods_list %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <span class="badge bg-secondary align-self-start mb-2">{{ g.category }}</span>
+                <h5 class="card-title">{{ g.name }}</h5>
+                {% if g.description %}<p class="card-text text-muted small">{{ g.description }}</p>{% endif %}
+                <p class="mb-1"><strong>{{ "%.2f"|format(g.price) }} ₽</strong></p>
+                <p class="text-muted small mb-3">В наличии: {{ g.quantity }} шт.</p>
+                <a href="{{ url_for('shop_page', shop_id=g.shop_id) }}"
+                   class="btn btn-outline-dark btn-sm mt-auto">В магазин «{{ g.shop.name }}»</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">В этой категории пока нет товаров.</div>
+{% endif %}
+{% endblock %}

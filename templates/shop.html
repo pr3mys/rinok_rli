@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ shop.name }}{% endblock %}
+
+{% block content %}
+<div class="card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <h2 class="mb-1">{{ shop.name }}
+                {% if shop.owner.verification == 1 %}<span class="badge bg-success align-middle">Верифицирован</span>{% endif %}
+            </h2>
+            {% if shop.description %}<p class="text-muted mb-2">{{ shop.description }}</p>{% endif %}
+            <p class="mb-1 small"><strong>Владелец:</strong> {{ shop.owner.first_name }} {{ shop.owner.last_name }}
+                {% if shop.owner.class_name %}({{ shop.owner.class_name }}){% endif %}</p>
+            <p class="mb-1 small"><strong>Телефон:</strong>
+                <a href="tel:{{ shop.owner.phone_number }}">{{ shop.owner.phone_number }}</a></p>
+            {% if shop.cabinet %}<p class="mb-1 small"><strong>Кабинет:</strong> {{ shop.cabinet }}</p>{% endif %}
+            {% if shop.delivery_price %}<p class="mb-1 small"><strong>Доставка:</strong> {{ "%.2f"|format(shop.delivery_price) }} ₽</p>{% endif %}
+            <p class="mb-0 small"><strong>Рейтинг:</strong>
+                {% if reviews %}{{ "%.1f"|format(shop.rating) }} / 5 ({{ reviews|length }} отзывов)
+                {% else %}нет отзывов{% endif %}
+            </p>
+        </div>
+        <a href="{{ url_for('showcase') }}" class="btn btn-outline-dark btn-sm">← Назад</a>
+    </div>
+</div>
+
+<h4 class="mb-3">Товары</h4>
+{% if goods_list %}
+<div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
+    {% for g in goods_list %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <span class="badge bg-secondary align-self-start mb-2">{{ g.category }}</span>
+                <h5 class="card-title">{{ g.name }}</h5>
+                {% if g.description %}<p class="card-text text-muted small">{{ g.description }}</p>{% endif %}
+                <p class="mb-1"><strong>{{ "%.2f"|format(g.price) }} ₽</strong></p>
+                <p class="text-muted small mb-3">
+                    В наличии: {{ g.quantity }} шт.
+                    {% if g.max_bron is not none %}· лимит брони: {{ g.max_bron }} шт.{% endif %}
+                </p>
+                {% if not is_admin and g.quantity > 0 %}
+                <form method="POST" action="{{ url_for('cart_add', goods_id=g.id) }}" class="d-flex gap-2 mt-auto">
+                    <input type="number" name="quantity" value="1" min="1" max="{{ g.quantity }}"
+                           class="form-control form-control-sm" style="max-width:90px;">
+                    <button class="btn btn-dark btn-sm flex-grow-1">В корзину</button>
+                </form>
+                {% elif g.quantity == 0 %}
+                    <span class="text-danger small mt-auto">Нет в наличии</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Товаров пока нет.</div>
+{% endif %}
+
+<h4 class="mb-3">Отзывы</h4>
+{% if reviews %}
+    {% for r in reviews %}
+    <div class="card p-3 mb-2">
+        <div class="d-flex justify-content-between mb-1">
+            <strong>{{ r.student.first_name }} {{ r.student.last_name }}</strong>
+            <span>{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</span>
+        </div>
+        {% if r.comment %}<p class="small mb-0">{{ r.comment }}</p>{% endif %}
+        <small class="text-muted">{{ r.created_at.strftime('%d.%m.%Y') }}</small>
+    </div>
+    {% endfor %}
+{% else %}
+<p class="text-muted">Отзывов пока нет.</p>
+{% endif %}
+{% endblock %}
