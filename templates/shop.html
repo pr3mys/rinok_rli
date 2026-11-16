@@ -39,13 +39,17 @@
                     В наличии: {{ g.quantity }} шт.
                     {% if g.max_bron is not none %}· лимит брони: {{ g.max_bron }} шт.{% endif %}
                 </p>
-                {% if not is_admin and g.quantity > 0 %}
+                {% if is_admin %}
+                    {# админ не покупает #}
+                {% elif g.shop.student_id == session.student_id %}
+                    <span class="text-muted small mt-auto">Это ваш товар</span>
+                {% elif g.quantity > 0 %}
                 <form method="POST" action="{{ url_for('cart_add', goods_id=g.id) }}" class="d-flex gap-2 mt-auto">
                     <input type="number" name="quantity" value="1" min="1" max="{{ g.quantity }}"
                            class="form-control form-control-sm" style="max-width:90px;">
                     <button class="btn btn-dark btn-sm flex-grow-1">В корзину</button>
                 </form>
-                {% elif g.quantity == 0 %}
+                {% else %}
                     <span class="text-danger small mt-auto">Нет в наличии</span>
                 {% endif %}
             </div>

@@ -236,6 +236,9 @@ def cart_add(goods_id):
     if g.shop.owner.verification != 1 or g.shop.owner.banned_sell:
         flash("Магазин временно недоступен", "warning")
         return redirect(url_for("showcase"))
+    if g.shop.student_id == s.id:
+        flash("Нельзя купить товар в своём магазине", "warning")
+        return redirect(url_for("shop_page", shop_id=g.shop_id))
 
     try:
         qty = max(1, int(request.form.get("quantity", 1)))
@@ -294,6 +297,9 @@ def cart_buy():
     shop = db.query(Shops).filter_by(id=items[0].shop_id).first()
     if not shop or shop.owner.verification != 1 or shop.owner.banned_sell:
         flash("Магазин временно недоступен", "warning")
+        return redirect(url_for("cart"))
+    if shop.student_id == s.id:
+        flash("В корзине есть товары из вашего магазина. Удалите их, чтобы оформить бронь.", "warning")
         return redirect(url_for("cart"))
 
     dtype = request.form.get("delivery_type", "pickup")

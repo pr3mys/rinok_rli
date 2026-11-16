@@ -2,36 +2,561 @@
 {% block title %}Витрина{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Витрина</h2>
+<style>
+    .showcase-page {
+        padding: 24px 20px 36px;
+        color: #172033;
+    }
 
-<div class="mb-4">
-    <a href="{{ url_for('showcase', category='все') }}"
-       class="btn btn-sm {{ 'btn-dark' if category == 'все' else 'btn-outline-dark' }} me-1">Все</a>
-    {% for c in categories %}
-        <a href="{{ url_for('showcase', category=c) }}"
-           class="btn btn-sm {{ 'btn-dark' if category == c else 'btn-outline-dark' }} me-1">{{ c|capitalize }}</a>
-    {% endfor %}
-</div>
+    /* Верхняя часть */
+    .showcase-hero {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        min-height: 205px;
+        margin-bottom: 32px;
+        padding: 32px 38px;
+        overflow: hidden;
+        border: 1px solid #d8e9fb;
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at 88% 15%, rgba(255,255,255,.85) 0 5px, transparent 6px),
+            linear-gradient(115deg, #ffffff 10%, #f0f7ff 100%);
+    }
 
-{% if goods_list %}
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-    {% for g in goods_list %}
-    <div class="col">
-        <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-                <span class="badge bg-secondary align-self-start mb-2">{{ g.category }}</span>
-                <h5 class="card-title">{{ g.name }}</h5>
-                {% if g.description %}<p class="card-text text-muted small">{{ g.description }}</p>{% endif %}
-                <p class="mb-1"><strong>{{ "%.2f"|format(g.price) }} ₽</strong></p>
-                <p class="text-muted small mb-3">В наличии: {{ g.quantity }} шт.</p>
-                <a href="{{ url_for('shop_page', shop_id=g.shop_id) }}"
-                   class="btn btn-outline-dark btn-sm mt-auto">В магазин «{{ g.shop.name }}»</a>
+    .showcase-hero::before {
+        content: "";
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        right: 5%;
+        top: -105px;
+        border: 1px solid rgba(16, 91, 162, .12);
+        border-radius: 50%;
+        box-shadow:
+            0 0 0 24px rgba(16, 91, 162, .035),
+            0 0 0 48px rgba(16, 91, 162, .025);
+        pointer-events: none;
+    }
+
+    .showcase-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    .showcase-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+    }
+
+    .showcase-brand-logo {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .showcase-brand-name {
+        color: #195BA2;
+        font-size: clamp(1.8rem, 3.5vw, 2.7rem);
+        font-weight: 850;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+    }
+
+    .showcase-brand-caption {
+        margin-top: 6px;
+        color: #64748B;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .showcase-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 13px;
+        color: #105ba2;
+        font-size: .76rem;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+        text-transform: uppercase;
+    }
+
+    .showcase-eyebrow::before {
+        content: "";
+        width: 23px;
+        height: 3px;
+        border-radius: 5px;
+        background: #f2c94c;
+    }
+
+    .showcase-heading {
+        margin: 0;
+        color: #172033;
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        letter-spacing: -1.8px;
+        line-height: 1.1;
+    }
+
+    .showcase-heading span {
+        color: #105ba2;
+    }
+
+    .showcase-subtitle {
+        max-width: 390px;
+        margin: 15px 0 0;
+        color: #64748b;
+        font-size: .98rem;
+        line-height: 1.65;
+    }
+
+    .showcase-hero-art {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: 142px;
+        height: 142px;
+        margin-right: 24px;
+        border: 1px solid rgba(16, 91, 162, .12);
+        border-radius: 38px;
+        background: rgba(255, 255, 255, .72);
+        transform: rotate(6deg);
+    }
+
+    .showcase-hero-art::before {
+        content: "";
+        position: absolute;
+        width: 94px;
+        height: 94px;
+        border: 2px dashed #b8d6f5;
+        border-radius: 50%;
+    }
+
+    .showcase-hero-symbol {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        height: 68px;
+        border-radius: 23px;
+        background: #105ba2;
+        color: white;
+        font-size: 2.2rem;
+        font-weight: 700;
+        box-shadow: 0 9px 24px rgba(16, 91, 162, .24);
+        transform: rotate(-6deg);
+    }
+
+    .showcase-hero-dot {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 13px;
+        height: 13px;
+        border: 3px solid white;
+        border-radius: 50%;
+        background: #f2c94c;
+    }
+
+    /* Заголовки разделов */
+    .showcase-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 17px;
+    }
+
+    .showcase-section-heading h3 {
+        margin: 0;
+        color: #172033;
+        font-size: 1.08rem;
+        font-weight: 750;
+    }
+
+    .showcase-section-line {
+        flex: 1;
+        height: 1px;
+        background: #dfeaf6;
+    }
+
+    .showcase-section-mark {
+        width: 7px;
+        height: 7px;
+        border-radius: 2px;
+        background: #f2c94c;
+        transform: rotate(45deg);
+    }
+
+    /* Фильтры */
+    .showcase-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 32px;
+    }
+
+    .showcase-filter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 19px;
+        border: 1px solid #c9def4;
+        border-radius: 12px;
+        background: #fff;
+        color: #105ba2;
+        font-size: .91rem;
+        font-weight: 650;
+        text-decoration: none;
+        transition: background .2s, color .2s, border-color .2s,
+                    transform .2s, box-shadow .2s;
+    }
+
+    .showcase-filter:hover {
+        border-color: #105ba2;
+        background: #edf5ff;
+        color: #105ba2;
+        transform: translateY(-2px);
+    }
+
+    .showcase-filter.active {
+        border-color: #105ba2;
+        background: #105ba2;
+        color: #fff;
+        box-shadow: 0 5px 13px rgba(16, 91, 162, .2);
+    }
+
+    /* Карточки товаров */
+    .showcase-card {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        border: 1px solid #e0e9f3;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(23, 32, 51, .035);
+        transition: transform .22s, box-shadow .22s, border-color .22s;
+    }
+
+    .showcase-card::before {
+        content: "";
+        display: block;
+        height: 4px;
+        background: linear-gradient(90deg, #105ba2 0%, #6eabe8 72%, #f2c94c 72%);
+    }
+
+    .showcase-card:hover {
+        border-color: #c3dcf6;
+        box-shadow: 0 12px 28px rgba(23, 32, 51, .09);
+        transform: translateY(-4px);
+    }
+
+    .showcase-card .card-body {
+        padding: 22px;
+    }
+
+    .showcase-category {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border: 1px solid #dcecff;
+        border-radius: 8px;
+        background: #edf5ff;
+        color: #105ba2;
+        font-size: .76rem;
+        font-weight: 700;
+    }
+
+    .showcase-card .card-title {
+        margin: 5px 0 10px;
+        color: #172033;
+        font-size: 1.12rem;
+        font-weight: 750;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .showcase-description {
+        color: #64748b;
+        font-size: .9rem;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .showcase-price {
+        margin-top: auto;
+        padding-top: 12px;
+        color: #105ba2;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .showcase-stock {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #64748b;
+        font-size: .83rem;
+    }
+
+    .showcase-stock::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #40b887;
+    }
+
+    .showcase-shop-link {
+        display: block;
+        padding: 11px 13px;
+        border: 1px solid #c9def4;
+        border-radius: 11px;
+        background: #f6faff;
+        color: #105ba2;
+        font-size: .88rem;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+        transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .showcase-shop-link:hover {
+        border-color: #105ba2;
+        background: #105ba2;
+        color: #fff;
+    }
+
+    /* Пустая категория */
+    .showcase-empty {
+        padding: 42px 20px;
+        border: 1px dashed #b8d6f5;
+        border-radius: 18px;
+        background: #f8fbff;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .showcase-empty-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 16px;
+        border-radius: 17px;
+        background: #e5f1ff;
+        color: #105ba2;
+        font-size: 1.6rem;
+        font-weight: 800;
+    }
+
+    .showcase-empty h5 {
+        color: #172033;
+        font-weight: 750;
+    }
+
+    @media (max-width: 650px) {
+        .showcase-page {
+            padding: 16px 4px 28px;
+        }.showcase-hero {
+            min-height: 175px;
+            padding: 25px 22px;
+            border-radius: 19px;
+        }
+
+        .showcase-hero-art {
+            width: 85px;
+            height: 85px;
+            margin-right: 0;
+            border-radius: 25px;
+        }
+
+        .showcase-hero-art::before {
+            width: 61px;
+            height: 61px;
+        }
+
+        .showcase-hero-symbol {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            font-size: 1.6rem;
+        }
+
+        .showcase-hero-dot {
+            top: 8px;
+            right: 8px;
+        }
+
+        .showcase-heading {
+            font-size: 2.2rem;
+        }
+
+        .showcase-subtitle {
+            font-size: .88rem;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .showcase-hero {
+            padding: 23px 18px;
+        }
+
+        .showcase-hero-art {
+            width: 64px;
+            height: 64px;
+        }
+
+        .showcase-hero-art::before {
+            width: 47px;
+            height: 47px;
+        }
+
+        .showcase-hero-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    background: transparent;
+    color: #FFBF00;
+    font-size: 4rem;
+    font-weight: 700;
+    box-shadow: none;
+    transform: rotate(-6deg);
+    }
+
+    .showcase-hero-symbol::before {
+        content: "✦";
+    }
+
+        .showcase-heading {
+            font-size: 1.9rem;
+        }
+
+        .showcase-eyebrow {
+            font-size: .65rem;
+            letter-spacing: 1px;
+        }
+    }
+</style>
+
+<div class="showcase-page">
+
+    <section class="showcase-hero">
+        <div class="showcase-hero-content">
+            <div class="showcase-brand">
+                <img
+                    src="{{ url_for('static', filename='images/logo1.png') }}"
+                    alt="Логотип ONE.LYCEUM"
+                    class="showcase-brand-logo"
+                >
+
+                <div>
+                    <div class="showcase-brand-name">ONE.LYCEUM</div>
+                    <div class="showcase-brand-caption">Рынок РЛИ</div>
+                </div>
             </div>
+            <div class="showcase-eyebrow">Маркетплейс РЛИ</div>
+            <h2 class="showcase-heading">
+                Витрина</span>
+            </h2>
+            <p class="showcase-subtitle">
+                Находи интересное, выбирай своё и открывай магазины лицея.
+            </p>
         </div>
-    </div>
-    {% endfor %}
+
+        <div class="showcase-hero-art" aria-hidden="true">
+            <div class="showcase-hero-symbol"></div>
+            <div class="showcase-hero-dot"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="showcase-section-heading">
+            <span class="showcase-section-mark"></span>
+            <h3>Категории</h3>
+            <div class="showcase-section-line"></div>
+        </div>
+
+        <div class="showcase-filters">
+            <a href="{{ url_for('showcase', category='все') }}"
+               class="showcase-filter {{ 'active' if category == 'все' else '' }}">
+                Все товары
+            </a>
+
+            {% for c in categories %}
+                <a href="{{ url_for('showcase', category=c) }}"
+                   class="showcase-filter {{ 'active' if category == c else '' }}">
+                    {{ c|capitalize }}
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <div class="showcase-section-heading">
+            <span class="showcase-section-mark"></span>
+            <h3>Товары</h3>
+            <div class="showcase-section-line"></div>
+        </div>
+
+        {% if goods_list %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                {% for g in goods_list %}
+                    <div class="col">
+                        <div class="card showcase-card h-100">
+                            <div class="card-body d-flex flex-column">
+
+                                <span class="showcase-category align-self-start mb-2">
+                                    {{ g.category }}
+                                </span>
+
+                                <h5 class="card-title">{{ g.name }}</h5>
+
+                                {% if g.description %}
+                                    <p class="showcase-description mb-3">
+                                        {{ g.description }}
+                                    </p>
+                                {% endif %}
+
+                                <p class="showcase-price mb-1">
+                                    {{ "%.2f"|format(g.price) }} ₽
+                                </p>
+                                <p class="showcase-stock mb-3">
+                                    В наличии: {{ g.quantity }} шт.
+                                </p>
+
+                                <a href="{{ url_for('shop_page', shop_id=g.shop_id) }}"
+                                   class="showcase-shop-link mt-auto">
+                                    В магазин «{{ g.shop.name }}» →
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="showcase-empty">
+                <div class="showcase-empty-mark">Р</div>
+                <h5 class="mb-2">Пока здесь пусто</h5>
+                <p class="mb-0">В этой категории пока нет товаров.</p>
+            </div>
+        {% endif %}
+    </section>
+
 </div>
-{% else %}
-<div class="alert alert-info">В этой категории пока нет товаров.</div>
-{% endif %}
 {% endblock %}
