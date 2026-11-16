@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<style>
+    .register-page {
+        max-width: 620px;
+        margin: 24px auto;
+    }
+
+    .register-card {
+        padding: 32px !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 12px 40px rgba(71, 84, 105, 0.08);
+    }
+
+    .register-heading {
+        color: #475569;
+        font-size: 1.9rem;
+        font-weight: 750;
+        letter-spacing: -0.8px;
+    }
+
+    .register-subtitle {
+        color: #64748b;
+        font-size: 0.94rem;
+    }
+
+    .register-card .form-label {
+        color: #475569;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .register-card .form-control {
+        min-height: 44px;
+        border: 1px solid #dbe2ea;
+        border-radius: 11px;
+        background: #f9fafc;
+        color: #475569;
+        padding: 10px 13px;
+        font-size: 0.94rem;
+    }
+
+    .register-card .form-control::placeholder {
+        color: #9aa6b5;
+    }
+
+    .register-card .form-control:focus {
+        background: #fff;
+        border-color: #4784be;
+        box-shadow: 0 0 0 3px rgba(71, 132, 190, 0.13);
+    }
+
+    .register-card .form-control:focus-visible {
+        outline: none;
+    }
+
+    .register-card .text-danger {
+        margin-top: 5px;
+        font-size: 0.82rem;
+    }
+
+    .register-submit {
+        min-height: 48px;
+        border-radius: 12px;
+        background: #4784be;
+        border: 1px solid #4784be;
+        color: #fff;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .register-submit:hover:not(:disabled) {
+        background: #3d73a8;
+        border-color: #3d73a8;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(71, 132, 190, 0.18);
+    }
+
+    .register-submit:disabled {
+        background: #a9bfd3;
+        border-color: #a9bfd3;
+        color: #fff;
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+
+    .register-link {
+        color: #4784be;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .register-link:hover {
+        color: #3d73a8;
+        text-decoration: underline;
+    }
+
+    .register-footer {
+        color: #64748b;
+        font-size: 0.94rem;
+    }
+
+    .register-card .alert {
+        border-radius: 12px;
+    }
+
+    @media (max-width: 576px) {
+        .register-page {
+            margin: 12px auto;
+        }
+
+        .register-card {
+            padding: 22px !important;
+        }
+
+        .register-heading {
+            font-size: 1.65rem;
+        }
+    }
+</style>
+
+<div class="register-page">
+    <div class="card register-card">
+        <div class="text-center mb-4">
+            <h2 class="register-heading mb-2">Создай аккаунт</h2>
+            <p class="register-subtitle mb-0">
+                Присоединяйся к сообществу Рынка РЛИ
+            </p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" id="registerForm"
+              onsubmit="return confirm('Аккаунт должен быть верифицирован в течение ближайших дней. По вопросам верификации обращайтесь к администраторам: {{ ADMIN_PHONES_STR }}. Запрещено указывать левые данные. Продолжить регистрацию?');">
+
+            <div class="mb-3">
+                <label class="form-label">Логин</label>
+                <input type="text" class="form-control" name="username"
+                       id="username" required placeholder="Минимум 5 символов">
+                <div class="text-danger small" id="usernameError"
+                     style="display:none;">Не менее 5 символов</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Пароль</label>
+                <input type="password" class="form-control" name="password1"
+                       id="password1" required placeholder="Минимум 6 символов">
+                       <div class="text-danger small" id="password1Error"
+                     style="display:none;">Не менее 6 символов</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Подтвердите пароль</label>
+                <input type="password" class="form-control" name="password2"
+                       id="password2" required placeholder="Повторите пароль">
+                <div class="text-danger small" id="password2Error"
+                     style="display:none;">Пароли не совпадают</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Имя</label>
+                    <input type="text" class="form-control" name="first_name"
+                           id="first_name" required placeholder="Иван">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Фамилия</label>
+                    <input type="text" class="form-control" name="last_name"
+                           id="last_name" required placeholder="Иванов">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Класс</label>
+                    <input type="text" class="form-control" name="class_name"
+                           placeholder="10А">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Телефон</label>
+                    <input type="tel" class="form-control" name="phone_number"
+                           id="phone_number" required placeholder="+7XXXXXXXXXX">
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="btn register-submit w-100 mt-2"
+                    id="submitBtn" disabled>
+                Зарегистрироваться
+            </button>
+        </form>
+
+        <div class="text-center mt-4 register-footer">
+            Уже есть аккаунт?
+            <a class="register-link" href="{{ url_for('login') }}">
+                Войти
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var btn = document.getElementById("submitBtn");
+    var u = document.getElementById("username");
+    var p1 = document.getElementById("password1");
+    var p2 = document.getElementById("password2");
+    var fn = document.getElementById("first_name");
+    var ln = document.getElementById("last_name");
+    var ph = document.getElementById("phone_number");
+
+    function toggle(id, show) {
+        document.getElementById(id).style.display =
+            show ? "block" : "none";
+    }
+
+    function check() {
+        var ok = true;
+
+        if (u.value.trim().length < 5) {
+            toggle("usernameError", true);
+            ok = false;
+        } else {
+            toggle("usernameError", false);
+        }
+
+        if (p1.value.length < 6) {
+            toggle("password1Error", true);
+            ok = false;
+        } else {
+            toggle("password1Error", false);
+        }
+
+        if (p1.value !== p2.value) {
+            toggle("password2Error", true);
+            ok = false;
+        } else {
+            toggle("password2Error", false);
+        }
+
+        if (!fn.value.trim()) ok = false;
+        if (!ln.value.trim()) ok = false;
+        if (!ph.value.trim()) ok = false;
+
+        btn.disabled = !ok;
+    }
+
+    [u, p1, p2, fn, ln, ph].forEach(function(el) {
+        el.addEventListener("input", check);
+    });
+
+    check();
+})();
+</script>
+{% endblock %}

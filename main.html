@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block title %}Рынок РЛИ {% endblock %}
+
+{% block content %}
+<style>
+.hero {
+    position: relative;
+    isolation: isolate;
+    width: 100vw;
+    min-height: 85vh;
+    margin-left: calc(50% - 50vw);
+    padding: clamp(48px, 8vh, 90px) max(6vw, calc((100vw - 1200px) / 2));
+    background-color: #E7EFF5;
+    background-image:
+        linear-gradient(
+            to bottom,
+            #E7EFF5 0%,
+            rgba(248, 250, 252, 0.85) 12%,
+            rgba(248, 250, 252, 0.25) 35%,
+            rgba(248, 250, 252, 0) 55%
+        ),
+        url("/static/images/hero-illustration.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 0;
+}
+
+.hero > .row {
+    width: 100%;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 767px) {
+    .hero {
+        min-height: 75vh;
+        padding: 48px 24px;
+    }
+}
+
+.hero > .row {
+    width: 100%;
+}
+
+.hero-description {
+    color: #475569;
+    text-shadow: 0 1px 12px rgba(248, 250, 252, 0.8);
+}
+
+@media (max-width: 767px) {
+    .hero {
+        min-height: 75vh;
+        padding: 48px 24px;
+    }
+}
+
+    .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: #eaf3ff;
+    color: #195ba2;
+    border: 1px solid #cfe2f7;
+    border-radius: 30px;
+    padding: 9px 15px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    margin-bottom: 24px;
+    }
+
+    .brand-star {
+        color: #195ba2;
+        font-size: 17px;
+    }
+
+    .brand-divider {
+        color: #9bb9d8;
+        font-weight: 400;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.8rem, 6vw, 5rem);
+        font-weight: 850;
+        letter-spacing: -3px;
+        line-height: .98;
+        margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+        color: #f2c94c;
+        text-shadow: 0 2px 15px rgba(242, 201, 76, .18);
+    }
+
+    .hero-description {
+    color: #E7EFF5;
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.8;
+    max-width: 480px;
+    margin-bottom: 30px;
+    text-shadow: 0 1px 8px rgba(248, 250, 252, 0.95);
+    }
+
+    .hero .btn {
+        padding: 13px 23px;
+    }
+
+    .hero .btn-primary {
+    background: #195ba2;
+    border-color: #195ba2;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 5px 16px rgba(25, 91, 162, .18);
+    transition: background .2s ease, border-color .2s ease,
+                box-shadow .2s ease, transform .2s ease;
+    }
+
+    .hero .btn-primary:hover {
+    background: #12477f;
+    border-color: #12477f;
+    color: #fff;
+    box-shadow: 0 7px 20px rgba(25, 91, 162, .25);
+    transform: translateY(-2px);
+    }
+
+    .hero .btn-primary:hover {
+        background: #105ba2;
+        border-color: #196fc0;
+    }
+    .hero .btn-outline-dark {
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        background: rgba(71, 84, 105, 0.28);
+    }
+
+    .hero .btn-outline-dark:hover {
+        color: #fff;
+        border-color: #fff;
+        background: rgba(71, 84, 105, 0.55);
+    }
+    .feature-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 28px 0 40px;
+    }
+
+    .feature {
+        padding: 22px;
+        background: #fff;
+        border: 1px solid #E7EFF5;
+        border-radius: 18px;
+    }
+
+    .feature-number {
+        color: #4784be;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 18px;
+    }
+    .feature-row .feature:first-child .feature-number,
+    .feature-row .feature:last-child .feature-number {
+        color: #ffbf00;
+    }
+
+    .feature h3 {
+        font-size: 1.05rem;
+        font-weight: 750;
+        margin-bottom: 8px;
+        color: #172033;
+    }
+
+    .feature p {
+        color: #64748b;
+        font-size: .92rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 767px) {
+        .hero {
+            padding: 32px 24px;
+            border-radius: 22px;
+        }
+
+        .hero h1 {
+            letter-spacing: -2px;
+        }
+
+        .hero-visual {
+            min-height: 240px;
+            margin-top: 16px;
+        }
+
+        .feature-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<section class="hero">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="hero-label">
+            <span class="brand-star">✳</span>
+            ONE.LYCEUM
+            <span class="brand-divider">/</span>
+            МАРКЕТПЛЕЙС ЛИЦЕЯ
+        </div>
+
+            <h1>
+                Рынок <br>
+                <span>РЛИ.</span>
+            </h1>
+
+            <p class="hero-description">
+                Покупай и продавай прямо в школе.
+                Вкусности, канцелярия, помощь со сложным предметом —
+                всё в одном месте, без хаоса в чатах.
+</p>
+
+            <a href="{{ url_for('register') }}"
+               class="btn btn-primary btn-lg me-2 mb-2">
+                Начать продавать ↗
+            </a>
+
+            <a href="{{ url_for('login') }}"
+               class="btn btn-outline-dark btn-lg mb-2">
+                Войти
+            </a>
+        </div>
+        
+    </div>
+</section>
+
+<section class="feature-row">
+    <div class="feature">
+        <div class="feature-number">01 / ПОКУПАЙ</div>
+        <h3>Каталог товаров</h3>
+        <p>Смотри товары и выбирай то, что нравится.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-number">02 / ПРОДАВАЙ</div>
+        <h3>Запускай свой бизнес</h3>
+        <p>Создавай магазин и предлагай свои товары другим.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-number">03 / ИСПОЛЬЗУЙ</div>
+        <h3>Без хаоса в чате</h3>
+        <p>Товары и заказы собраны в одном месте.</p>
+    </div>
+</section>
+{% endblock %}
