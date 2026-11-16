@@ -6,11 +6,126 @@
     <title>{% block title %}Рынок РЛИ{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
-        body { background: #f8f9fa; display: flex; flex-direction: column; min-height: 100vh; }
-        .navbar { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        main { flex: 1; }
-        footer { background: white; border-top: 1px solid #e9ecef; }
-    </style>
+    :root {
+        --blue: #1f65fd;
+        --blue-dark: #1f65fd;
+        --text: #172033;
+        --muted: #64748b;
+        --bg: #f5f7fb;
+        --border: #e2e8f0;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                     sans-serif;
+    }
+
+    .navbar {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+
+    .navbar-brand {
+    color: var(--text) !important;
+    font-size: 1.4rem;
+    font-weight: 750;
+    letter-spacing: -0.8px;
+    transition: opacity 0.2s ease;
+    }
+
+    .navbar-brand:hover {
+        opacity: 0.75;
+    }
+
+    main {
+        flex: 1;
+    }
+
+   .btn {
+    border-radius: 12px;
+    font-weight: 550;
+    padding: 8px 15px;
+    transition: all 0.2s ease;
+}
+.btn-dark {
+    background: #0067bc;
+    border-color: #0067bc;
+    color: #fff;
+}
+
+.btn-dark:hover {
+    background: #3D73A8;
+    border-color: #3D73A8;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(71, 132, 190, 0.18);
+}
+
+.btn-outline-dark {
+    color: var(--text);
+    border-color: transparent;
+    background: transparent;
+}
+.btn-outline-dark:hover {
+    color: #3e5f8e;
+    border-color: transparent;
+    background: #EEF1F5;
+}
+
+.btn-outline-danger {
+    border-color: #f0d9de;
+    color: #b65b6c;
+    background: #fff9fa;
+}
+
+.btn-outline-danger:hover {
+    background: #f9e8ec;
+    border-color: #edcbd3;
+    color: #984557;
+}
+
+    .form-control,
+    .form-select {
+        border-color: var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    footer {
+        background: #fff;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+    }
+
+    footer a {
+        color: var(--blue);
+        text-decoration: none;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+</style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg mb-4">
