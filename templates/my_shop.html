@@ -2,17 +2,171 @@
 {% block title %}Мой магазин{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h2 class="mb-0">{{ shop.name }}
-        <span class="badge bg-success align-middle">Верифицирован</span>
-    </h2>
-    <a href="{{ url_for('shop_page', shop_id=shop.id) }}" class="btn btn-outline-dark btn-sm">Открыть как покупатель</a>
+<style>
+    .seller-product-card {
+    border: 1px solid #DCE7F5;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .seller-product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 14px rgba(25, 91, 162, 0.10);
+    }
+
+   .seller-product-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    object-fit: contain;
+    background: #EAF3FF;
+    }
+
+    .seller-product-card .card-body {
+        padding: 12px;
+    }
+
+    .seller-product-price {
+        color: #195BA2;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .seller-product-info {
+        color: #64748B;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+    .seller-header {
+        background: linear-gradient(135deg, #FFFFFF 0%, #EAF3FF 100%);
+        border: 1px solid #DCE7F5;
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .seller-header h2 {
+        color: #195BA2;
+        font-weight: 750;
+        letter-spacing: -0.4px;
+    }
+
+    .seller-header .seller-subtitle {
+        color: #64748B;
+        font-size: 0.95rem;
+        margin-top: 6px;
+        margin-bottom: 0;
+    }
+
+    .seller-header .btn {
+        border-radius: 10px;
+        padding: 9px 14px;
+    }
+
+    .seller-section {
+        background: #FFFFFF;
+        border: 1px solid #E2EAF4;
+        border-radius: 18px;
+        box-shadow: 0 4px 16px rgba(25, 91, 162, 0.04);
+    }
+
+    .seller-section-title {
+        color: #172033;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+    }
+
+    .seller-section-title::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 20px;
+        background: #FFBF00;
+        border-radius: 4px;
+        margin-right: 10px;
+        vertical-align: -4px;
+    }
+    .seller-preview-btn {
+    background: #195BA2;
+    color: #f9f9f9;
+    border: 1px solid #195BA2;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .seller-preview-btn:hover {
+        background: #ffffff;
+        border-color: #ffffff;
+        color: #195BA2;
+        transform: translateY(-1px);
+    }
+        /* Компактные карточки товаров продавца */
+    .seller-product-card .card-body {
+        padding: 6px 8px;
+    }
+
+    .seller-product-card .card-title {
+        font-size: 1rem;
+        margin-bottom: 6px;
+        overflow-wrap: anywhere;
+    }
+
+    .seller-product-card .seller-product-price {
+        font-size: 1.05rem;
+    }
+
+    .seller-product-card .seller-product-info {
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    .seller-product-card .badge {
+        font-size: 0.7rem;
+    }
+
+    .seller-product-card .btn {
+        font-size: 0.75rem;
+        padding: 4px 7px;
+    }
+
+    .seller-product-card details summary {
+        font-size: 0.8rem;
+    }
+    .seller-product-card .card-body .card-title {
+    margin-bottom: 4px;
+    line-height: 1.2;
+    }
+    </style>
+<div class="seller-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div>
+        <div class="small text-uppercase mb-2" style="color: #64748B; letter-spacing: 1.5px;">
+            Кабинет продавца
+        </div>
+
+        <h2 class="mb-0">
+            {{ shop.name }}
+            <span class="badge bg-success align-middle" style="font-size: 0.65rem;">
+                Верифицирован
+            </span>
+        </h2>
+
+        <p class="seller-subtitle">Управляйте магазином и своими товарами</p>
+    </div>
+
+    <a href="{{ url_for('shop_page', shop_id=shop.id) }}"
+       class="btn btn-sm seller-preview-btn">
+        Открыть как покупатель →
+    </a>
 </div>
 
 {% if sell_error %}<div class="alert alert-warning">{{ sell_error }}</div>{% endif %}
 
-<div class="card p-4 mb-4">
-    <h5 class="mb-3">Данные магазина</h5>
+<div class="card seller-section p-4 mb-4">
+    <h5 class="seller-section-title mb-3">Данные магазина</h5>
     <p class="small mb-1"><strong>Банк:</strong> {{ shop.bank or '—' }}</p>
     <p class="small mb-1"><strong>Счёт:</strong> {{ shop.payment_number or '—' }}</p>
     <p class="small mb-1"><strong>Кабинет:</strong> {{ shop.cabinet or '—' }}</p>
@@ -20,7 +174,7 @@
 
     <details>
         <summary class="text-primary" style="cursor:pointer;">Редактировать магазин</summary>
-        <form method="POST" action="{{ url_for('shop_edit') }}" class="row g-2 mt-2">
+        <form method="POST" action="{{ url_for('shop_edit') }}" class="row g-2 mt-2" enctype="multipart/form-data">
             <div class="col-md-6"><input type="text" name="name" value="{{ shop.name }}" class="form-control form-control-sm" required></div>
             <div class="col-md-6"><input type="text" name="description" value="{{ shop.description or '' }}" class="form-control form-control-sm" placeholder="Описание"></div>
             <div class="col-md-6"><input type="text" name="bank" value="{{ shop.bank or '' }}" class="form-control form-control-sm" placeholder="Банк"></div>
@@ -32,56 +186,134 @@
     </details>
 </div>
 
-<div class="card p-4 mb-4">
-    <h5 class="mb-3">Товары</h5>
+<div class="card seller-section p-4 mb-4">
+    <h5 class="seller-section-title mb-3">Товары</h5>
     {% if shop_goods %}
-    <div class="table-responsive">
-    <table class="table table-sm align-middle">
-        <thead><tr><th>Название</th><th>Категория</th><th>Цена</th><th>Остаток</th><th>Бронь</th><th>Лимит</th><th>Активен</th><th></th></tr></thead>
-        <tbody>
-        {% for g in shop_goods %}
-        <tr>
-            <td>{{ g.name }}</td>
-            <td>{{ g.category }}</td>
-            <td>{{ "%.2f"|format(g.price) }} ₽</td>
-            <td>{{ g.quantity }}</td>
-            <td>{{ g.bron_sum }}</td>
-            <td>{{ g.max_bron if g.max_bron is not none else '—' }}</td>
-            <td>{{ 'Да' if g.is_active else 'Нет' }}</td>
-            <td class="text-end text-nowrap">
-                <form method="POST" action="{{ url_for('goods_toggle', goods_id=g.id) }}" class="d-inline">
-                    <button class="btn btn-outline-secondary btn-sm">{{ 'Скрыть' if g.is_active else 'Показать' }}</button>
-                </form>
-                <form method="POST" action="{{ url_for('goods_delete', goods_id=g.id) }}" class="d-inline"
-                      onsubmit="return confirm('Удалить товар?');">
-                    <button class="btn btn-outline-danger btn-sm">Удалить</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="8">
-                <details>
-                    <summary class="text-primary small" style="cursor:pointer;">Редактировать «{{ g.name }}»</summary>
-                    <form method="POST" action="{{ url_for('goods_edit', goods_id=g.id) }}" class="row g-2 mt-2">
-                        <div class="col-md-4"><input type="text" name="name" value="{{ g.name }}" class="form-control form-control-sm" required></div>
-                        <div class="col-md-2">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+    {% for g in shop_goods %}
+    <div class="col">
+        <div class="card seller-product-card h-100">
+
+            {% if g.image_filename %}
+            <img
+                src="{{ url_for('static', filename='uploads/goods/' ~ g.image_filename) }}"
+                class="seller-product-image"
+                alt="{{ g.name }}"
+                loading="lazy"
+            >
+            {% endif %}
+
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                    <span class="badge bg-secondary">{{ g.category }}</span>
+                    <span class="badge {{ 'bg-success' if g.is_active else 'bg-secondary' }}">
+                        {{ 'Активен' if g.is_active else 'Скрыт' }}
+                    </span>
+                </div>
+
+                <h5 class="card-title">{{ g.name }}</h5>
+
+                {% if g.description %}
+                <p class="text-muted small">{{ g.description }}</p>
+                {% endif %}
+
+                <p class="seller-product-price mb-2">
+                    {{ "%.2f"|format(g.price) }} ₽
+                </p>
+
+                <div class="seller-product-info mb-3">
+                    <div>В наличии: <strong>{{ g.quantity }} шт.</strong></div>
+                    <div>Забронировано: <strong>{{ g.bron_sum }}</strong></div>
+                    <div>
+                        Лимит брони:
+                        <strong>{{ g.max_bron if g.max_bron is not none else '—' }}</strong>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <form method="POST" action="{{ url_for('goods_toggle', goods_id=g.id) }}">
+                        <button class="btn btn-outline-secondary btn-sm">
+                            {{ 'Скрыть' if g.is_active else 'Показать' }}
+                        </button>
+                    </form>
+
+                    <form method="POST"
+                          action="{{ url_for('goods_delete', goods_id=g.id) }}"
+                          onsubmit="return confirm('Удалить товар?');">
+                        <button class="btn btn-outline-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+
+                <details class="mt-auto">
+                    <summary class="text-primary small" style="cursor:pointer;">
+                        Редактировать товар
+                    </summary>
+
+                    <form method="POST"
+                          action="{{ url_for('goods_edit', goods_id=g.id) }}"
+                          class="row g-2 mt-2"
+                          enctype="multipart/form-data">
+
+                        <div class="col-12">
+                            <input type="text" name="name" value="{{ g.name }}"
+                                   class="form-control form-control-sm" required>
+                        </div>
+
+                        <div class="col-12">
                             <select name="category" class="form-select form-select-sm">
-                                {% for c in categories %}<option value="{{ c }}" {% if g.category == c %}selected{% endif %}>{{ c|capitalize }}</option>{% endfor %}
+                                {% for c in categories %}
+                                <option value="{{ c }}" {% if g.category == c %}selected{% endif %}>
+                                    {{ c|capitalize }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-2"><input type="number" step="0.01" min="0" name="price" value="{{ g.price }}" class="form-control form-control-sm" required></div>
-                        <div class="col-md-2"><input type="number" min="0" name="quantity" value="{{ g.quantity }}" class="form-control form-control-sm" required></div>
-                        <div class="col-md-2"><input type="number" min="0" name="max_bron" value="{{ g.max_bron if g.max_bron is not none else '' }}" class="form-control form-control-sm" placeholder="Лимит"></div>
-                        <div class="col-12"><input type="text" name="description" value="{{ g.description or '' }}" class="form-control form-control-sm" placeholder="Описание"></div>
-                        <div class="col-12"><button class="btn btn-dark btn-sm">Сохранить</button></div>
+
+                        <div class="col-6">
+                            <label class="form-label small">Цена</label>
+                            <input type="number" step="0.01" min="0" name="price"
+                                   value="{{ g.price }}" class="form-control form-control-sm" required>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label small">Количество</label>
+                            <input type="number" min
+                            ="0" name="quantity"
+                                   value="{{ g.quantity }}" class="form-control form-control-sm" required>
+                        </div>
+
+                        <div class="col-12">
+                            <input type="number" min="0" name="max_bron"
+                                   value="{{ g.max_bron if g.max_bron is not none else '' }}"
+                                   class="form-control form-control-sm" placeholder="Лимит брони">
+                        </div>
+
+                        <div class="col-12">
+                            <input type="text" name="description"
+                                   value="{{ g.description or '' }}"
+                                   class="form-control form-control-sm" placeholder="Описание">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small">Новая фотография</label>
+                            <input type="file" name="image"
+                                   class="form-control form-control-sm js-image-crop"
+                                   accept="image/png,image/jpeg,image/webp">
+                            <div class="form-text">
+                                Если не выбирать файл, прежняя фотография останется.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn btn-dark btn-sm">Сохранить</button>
+                        </div>
                     </form>
                 </details>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </div>
+        </div>
     </div>
+    {% endfor %}
+</div>
     {% else %}
         <p class="text-muted small">Товаров пока нет.</p>
     {% endif %}
@@ -100,6 +332,17 @@
             <div class="col-md-2"><input type="number" min="0" name="quantity" class="form-control form-control-sm" placeholder="Кол-во" required></div>
             <div class="col-md-2"><input type="number" min="0" name="max_bron" class="form-control form-control-sm" placeholder="Лимит брони"></div>
             <div class="col-12"><input type="text" name="description" class="form-control form-control-sm" placeholder="Описание"></div>
+            <div class="col-12">
+            <label class="form-label" for="goods-image">Фотография товара</label>
+            <input
+                type="file"
+                id="goods-image"
+                name="image"
+                class="form-control form-control-sm js-image-crop"
+                accept="image/png,image/jpeg,image/webp"
+            >
+            <div class="form-text">PNG, JPG или WebP, до 5 МБ.</div>
+        </div>
             <div class="col-12"><button class="btn btn-dark btn-sm">Добавить</button></div>
         </form>
     </details>
@@ -145,4 +388,221 @@
         {% endif %}
     {% endfor %}
 </div>
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<style>
+    .crop-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(15, 23, 42, .75);
+    }
+
+    .crop-modal.is-open {
+        display: flex;
+    }
+
+    .crop-dialog {
+        width: 100%;
+        max-width: 650px;
+        padding: 22px;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+    }
+
+    .crop-dialog h3 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 1.25rem;
+        font-weight: 750;
+    }
+
+    .crop-preview {
+        width: 100%;
+        height: 360px;
+        margin-top: 18px;
+        overflow: hidden;
+        background: #f1f5f9;
+        border-radius: 12px;
+    }
+
+    .crop-preview img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .crop-actions {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    @media (max-width: 500px) {
+        .crop-preview {
+            height: 280px;
+        }
+    }
+</style>
+
+<div class="crop-modal" id="goodsCropModal">
+    <div class="crop-dialog" role="dialog" aria-modal="true"
+         aria-labelledby="goodsCropTitle">
+
+        <h3 id="goodsCropTitle">Обрезка фотографии</h3>
+        <p class="text-muted mb-0">
+            Перемещай изображение и выбери область, которая попадёт в карточку товара.
+        </p>
+
+        <div class="crop-preview">
+            <img id="goodsCropImage" alt="Предпросмотр фотографии">
+        </div>
+
+        <div class="crop-actions">
+            <button type="button" class="btn btn-outline-secondary"
+                    id="goodsCropCancel">
+                Отмена
+            </button>
+
+            <button type="button" class="btn btn-dark"
+                    id="goodsCropConfirm">
+                Применить обрезку
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll(".js-image-crop");
+    const modal = document.getElementById("goodsCropModal");
+    const image = document.getElementById("goodsCropImage");
+    const cancelButton = document.getElementById("goodsCropCancel");
+    const confirmButton = document.getElementById("goodsCropConfirm");
+
+    let cropper = null;
+    let activeInput = null;
+    let objectUrl = null;
+
+    function closeCropModal(clearInput) {
+        modal.classList.remove("is-open");
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+        if (clearInput && activeInput) {
+            activeInput.value = "";
+        }
+
+        image.removeAttribute("src");
+
+        if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = null;
+        }
+
+        activeInput = null;
+    }
+
+    inputs.forEach(function (input) {
+        input.addEventListener("change", function () {
+            const file = input.files[0];
+
+            if (!file) return;
+
+            if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+                alert("Выбери изображение в формате JPG, PNG или WebP.");
+                input.value = "";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Размер фотографии не должен превышать 5 МБ.");
+                input.value = "";
+                return;
+            }
+
+            if (typeof Cropper === "undefined") {
+                alert("Не удалось загрузить инструмент обрезки. Проверь подключение к интернету.");
+                input.value = "";
+                return;
+            }
+
+            activeInput = input;
+            objectUrl = URL.createObjectURL(file);
+            image.src = objectUrl;
+            modal.classList.add("is-open");
+
+            image.onload = function () {
+                if (cropper) cropper.destroy();
+
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: "move",
+                    autoCropArea: 0.9,
+                    responsive: true,
+                    background: false
+                });
+            };
+        });
+    });
+
+    cancelButton.addEventListener("click", function () {
+        closeCropModal(true);
+    });
+
+    confirmButton.addEventListener("click", function () {
+        if (!cropper || !activeInput) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 800,
+            height: 800,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: "high"
+        });
+
+        if (!canvas) {
+            alert("Не удалось обрезать фотографию. Попробуй другое изображение.");
+            return;
+        }
+
+        canvas.toBlob(function (blob) {
+            if (!blob || !activeInput) {
+                alert("Не удалось подготовить фотографию.");
+                return;
+            }
+
+            const croppedFile = new File(
+                [blob],
+                "product.webp",
+                { type: "image/webp" }
+            );
+
+            const transfer = new DataTransfer();
+            transfer.items.add(croppedFile);
+            activeInput.files = transfer.files;
+
+            closeCropModal(false);
+        }, "image/webp", 0.9);
+    });
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeCropModal(true);
+        }
+    });
+});
+</script>
 {% endblock %}
