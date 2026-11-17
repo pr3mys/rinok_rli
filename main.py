@@ -19,7 +19,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
-ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "jfif"}
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
@@ -74,6 +74,12 @@ STATUS_BADGES = {
 @app.teardown_appcontext
 def _close(_=None):
     db.remove()
+
+
+@app.errorhandler(413)
+def _payload_too_large(_):
+    flash("Файл слишком большой. Максимальный размер — 5 МБ.", "danger")
+    return redirect(request.referrer or url_for("main"))
 
 
 def is_admin():
@@ -684,6 +690,8 @@ def read_goods_form():
         "max_bron": max_bron,
         "description": request.form.get("description", "").strip() or None,
     }, None
+
+
 def save_goods_image(file):
     if not file or not file.filename:
         return None, None
@@ -692,9 +700,14 @@ def save_goods_image(file):
     ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
 
     if ext not in ALLOWED_IMAGE_EXTENSIONS:
-        return None, "Выберите изображение PNG, JPG или WebP"
+        return None, (
+            "Вы выбрали файл неподдерживаемого формата. "
+            "Допустимые форматы: PNG, JPG, JPEG, WEBP, JFIF."
+        )
 
-    image_filename = f"{uuid.uuid4().hex}.{ext}"
+    # JFIF — тот же JPEG, сохраняем с расширением .jpg для совместимости с браузерами
+    save_ext = "jpg" if ext == "jfif" else ext
+    image_filename = f"{uuid.uuid4().hex}.{save_ext}"
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
 
     file.save(filepath)
@@ -783,6 +796,7 @@ def goods_edit(goods_id):
 
     flash("Товар обновлён", "success")
     return redirect(url_for("my_shop"))
+
 
 @app.route("/goods/<int:goods_id>/toggle", methods=["POST"])
 def goods_toggle(goods_id):
