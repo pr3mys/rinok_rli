@@ -2,7 +2,190 @@
 {% block title %}Профиль{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Личный кабинет</h2>
+<style>
+    .profile-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding-bottom: 32px;
+        color: #172033;
+    }
+
+    .profile-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 26px;
+    }
+n
+    .profile-heading-ico {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 16px;
+        background: #195BA2;
+        color: #FFBF00;
+        font-size: 26px;
+    }
+
+    .profile-heading h2 {
+        margin: 0;
+        font-weight: 750;
+        letter-spacing: -0.5px;
+    }
+
+    .profile-heading p {
+        margin: 5px 0 0;
+        color: #64748B;
+        font-size: 14px;
+    }
+
+    .profile-page > .card {
+        border: 1px solid #DCE7F5;
+        border-radius: 18px;
+        padding: 24px !important;
+        margin-bottom: 22px !important;
+        box-shadow: 0 4px 16px rgba(25, 91, 162, 0.05);
+        background: #FFFFFF;
+    }
+
+    .profile-page > .card > h5 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #EAF3FF;
+        color: #195BA2;
+        font-size: 18px;
+        font-weight: 750;
+    }
+
+    .profile-page .badge.bg-success {
+        background: #E5F7EC !important;
+        color: #187344;
+        font-size: 11px;
+        padding: 6px 9px;
+        border-radius: 7px;
+    }
+
+    .profile-page details {
+        padding: 11px 13px;
+        border-radius: 10px;
+        background: #F5F9FF;
+        margin-top: 10px;
+    }
+
+    .profile-page details summary {
+        color: #195BA2 !important;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .profile-page .form-control,
+    .profile-page .form-select {
+        border-color: #DCE7F5;
+        border-radius: 9px;
+    }
+
+    .profile-page .form-control:focus,
+    .profile-page .form-select:focus {
+        border-color: #195BA2;
+        box-shadow: 0 0 0 3px rgba(25, 91, 162, 0.12);
+    }
+
+    .profile-page .btn-dark {
+        background: #195BA2;
+        border-color: #195BA2;
+        border-radius: 9px;
+        font-weight: 600;
+    }
+
+    .profile-page .btn-dark:hover {
+        background: #12477F;
+        border-color: #12477F;
+    }
+
+    .profile-page .btn-outline-danger {
+        border-radius: 9px;
+    }
+
+    .profile-page .border.rounded.p-3 {
+        border-color: #DCE7F5 !important;
+        border-radius: 13px !important;
+        background: #FBFDFF;
+    }
+
+    .profile-page .alert {
+        border: none;
+        border-radius: 12px;
+        padding: 15px 18px;
+    }
+
+    .profile-page .alert-warning {
+        background: #FFF7DE;
+        color: #795600;
+    }
+
+    .profile-page .alert-danger {
+        background: #FFF0F0;
+        color: #A52B35;
+    }
+
+    .profile-page a {
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 576px) {
+        .profile-page > .card {
+            padding: 17px !important;
+        }
+
+        .profile-heading-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .profile-heading h2 {
+            font-size: 24px;
+        }
+    }
+    .profile-heading-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: #195BA2;
+    overflow: hidden;
+    }
+
+    .profile-logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 5px;
+    }
+</style>
+<div class="profile-page">
+
+    <div class="profile-heading">
+        <div class="profile-heading-icon">
+            <img src="{{ url_for('static', filename='images/logo2.PNG') }}"
+                alt="РЛИ"
+                class="profile-logo">
+        </div>
+        <div>
+            <h2>Личный кабинет</h2>
+            <p>
+            Добро пожаловать, {{ student.first_name }}!
+            Всё о твоих покупках и аккаунте — здесь.
+        </p>
+        </div>
+    </div>
 
 {% if student.verification != 1 %}
 <div class="alert alert-warning">
@@ -155,4 +338,5 @@
     {% endif %}
 </div>
 {% endif %}
+</div>
 {% endblock %}

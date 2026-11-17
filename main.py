@@ -1,6 +1,8 @@
 import os
+import uuid
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from sqlalchemy import create_engine, event, func
+from sqlalchemy import create_engine, event, func, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,6 +13,13 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+UPLOAD_FOLDER = os.path.join(app.root_path, "static", "uploads", "goods")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+
+ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
@@ -27,6 +36,18 @@ def _pragma(conn, _):
 
 engine = create_engine("sqlite:///data_base.db", echo=False)
 Base.metadata.create_all(engine)
+
+with engine.begin() as conn:
+    columns = [
+        row[1]
+        for row in conn.exec_driver_sql("PRAGMA table_info(goods)").fetchall()
+    ]
+
+    if "image_filename" not in columns:
+        conn.execute(
+            text("ALTER TABLE goods ADD COLUMN image_filename VARCHAR(255)")
+        )
+
 db = scoped_session(sessionmaker(bind=engine))
 
 ADMIN_LOGIN = os.getenv("ADMIN_LOGIN")
@@ -663,6 +684,22 @@ def read_goods_form():
         "max_bron": max_bron,
         "description": request.form.get("description", "").strip() or None,
     }, None
+def save_goods_image(file):
+    if not file or not file.filename:
+        return None, None
+
+    filename = secure_filename(file.filename)
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return None, "Выберите изображение PNG, JPG или WebP"
+
+    image_filename = f"{uuid.uuid4().hex}.{ext}"
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
+
+    file.save(filepath)
+
+    return image_filename, None
 
 
 @app.route("/goods/add", methods=["POST"])
@@ -670,6 +707,7 @@ def goods_add():
     s = me()
     if not s:
         return redirect(url_for("login"))
+
     err = sell_error(s)
     if err:
         flash(err, "warning")
@@ -684,8 +722,17 @@ def goods_add():
         flash(err, "danger")
         return redirect(url_for("my_shop"))
 
+    image_filename, err = save_goods_image(request.files.get("image"))
+    if err:
+        flash(err, "danger")
+        return redirect(url_for("my_shop"))
+
+    if image_filename:
+        data["image_filename"] = image_filename
+
     db.add(Goods(shop_id=shop.id, bron_sum=0, is_active=True, **data))
     db.commit()
+
     flash("Товар добавлен", "success")
     return redirect(url_for("my_shop"))
 
@@ -695,6 +742,7 @@ def goods_edit(goods_id):
     s = me()
     if not s:
         return redirect(url_for("login"))
+
     err = sell_error(s)
     if err:
         flash(err, "warning")
@@ -714,12 +762,27 @@ def goods_edit(goods_id):
         flash(err, "danger")
         return redirect(url_for("my_shop"))
 
+    image_filename, err = save_goods_image(request.files.get("image"))
+    if err:
+        flash(err, "danger")
+        return redirect(url_for("my_shop"))
+
     for k, v in data.items():
         setattr(g, k, v)
+
+    if image_filename:
+        old_image = g.image_filename
+        g.image_filename = image_filename
+
+        if old_image:
+            old_path = os.path.join(app.config["UPLOAD_FOLDER"], old_image)
+            if os.path.isfile(old_path):
+                os.remove(old_path)
+
     db.commit()
+
     flash("Товар обновлён", "success")
     return redirect(url_for("my_shop"))
-
 
 @app.route("/goods/<int:goods_id>/toggle", methods=["POST"])
 def goods_toggle(goods_id):

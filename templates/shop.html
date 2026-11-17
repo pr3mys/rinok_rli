@@ -2,40 +2,272 @@
 {% block title %}{{ shop.name }}{% endblock %}
 
 {% block content %}
-<div class="card p-4 mb-4">
+<style>
+    .public-shop {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-bottom: 30px;
+        color: #172033;
+    }
+
+    .public-shop .shop-header {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        margin-bottom: 30px;
+        border: 0;
+        border-radius: 20px;
+        background: linear-gradient(125deg, #195BA2, #12477F);
+        color: #FFFFFF;
+        box-shadow: 0 8px 24px rgba(25, 91, 162, 0.15);
+    }
+
+    .public-shop .shop-header h2 {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .public-shop .shop-description {
+        color: #EAF3FF;
+        max-width: 650px;
+    }
+
+    .public-shop .shop-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .public-shop .shop-info-item {
+        padding: 9px 12px;
+        border: 1px solid rgba(255,255,255,.22);
+        border-radius: 10px;
+        background: rgba(255,255,255,.09);
+        font-size: 13px;
+        overflow-wrap: anywhere;
+    }
+
+    .public-shop .shop-info-item strong {
+        color: #FFBF00;
+    }
+
+    .public-shop .shop-verified {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: #FFBF00;
+        color: #172033;
+        font-size: 11px;
+        font-weight: 750;
+        vertical-align: middle;
+        letter-spacing: 0;
+    }
+
+    .public-shop .shop-back-btn {
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: 9px;
+        color: #FFFFFF;
+        white-space: nowrap;
+    }
+
+    .public-shop .shop-back-btn:hover {
+        background: #FFFFFF;
+        color: #195BA2;
+    }
+
+    .public-shop .shop-section-title {
+        margin-bottom: 16px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+    }
+
+    .public-shop .shop-product-card {
+        height: 100%;
+        overflow: hidden;
+        border: 1px solid #DCE7F5;
+        border-radius: 13px;
+        background: #FFFFFF;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .public-shop .shop-product-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(25, 91, 162, .10);
+    }
+
+    .public-shop .shop-product-image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        height: auto;
+        object-fit: contain;
+        background: #EAF3FF;
+        padding: 5px;
+    }
+
+    .public-shop .shop-product-card .card-body {
+        padding: 11px;
+    }
+
+    .public-shop .shop-product-card .card-title {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+        margin-bottom: 7px;
+    }
+
+    .public-shop .shop-product-card .card-text {
+        font-size: 12px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .public-shop .shop-category {
+        background: #EAF3FF !important;
+        color: #195BA2 !important;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .public-shop .shop-price {
+        color: #195BA2;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .public-shop .shop-stock {
+        font-size: 11px;
+    }
+
+    .public-shop .btn-dark {
+        background: #195BA2;
+        border-color: #195BA2;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .public-shop .btn-dark:hover {
+        background: #12477F;
+        border-color: #12477F;
+    }
+
+    .public-shop .shop-reviews {
+        padding: 20px;
+        border: 1px solid #DCE7F5;
+        border-radius: 14px;
+        background: #FFFFFF;
+        margin-bottom: 12px;
+    }
+
+    .public-shop .shop-stars {
+        color: #D99500;
+        white-space: nowrap;
+        letter-spacing: 1px;
+    }
+
+    .public-shop .shop-empty {
+        padding: 24px;
+        border: 1px dashed #C6D8EE;
+        border-radius: 14px;
+        background: #F5F9FF;
+        color: #64748B
+        ;
+    }
+
+    @media (max-width: 576px) {
+        .public-shop .shop-header {
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .public-shop .shop-info {
+            gap: 7px;
+        }
+
+        .public-shop .shop-info-item {
+            padding: 8px 10px;
+        }
+
+        .public-shop .shop-product-card .card-body {
+            padding: 9px;
+        }
+
+        .public-shop .shop-price {
+            font-size: 15px;
+        }
+    }
+</style>
+<div class="public-shop">
+<div class="shop-header">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
         <div>
             <h2 class="mb-1">{{ shop.name }}
-                {% if shop.owner.verification == 1 %}<span class="badge bg-success align-middle">Верифицирован</span>{% endif %}
+                {% if shop.owner.verification == 1 %}<span class="shop-verified">Верифицирован</span>{% endif %}
             </h2>
-            {% if shop.description %}<p class="text-muted mb-2">{{ shop.description }}</p>{% endif %}
-            <p class="mb-1 small"><strong>Владелец:</strong> {{ shop.owner.first_name }} {{ shop.owner.last_name }}
-                {% if shop.owner.class_name %}({{ shop.owner.class_name }}){% endif %}</p>
-            <p class="mb-1 small"><strong>Телефон:</strong>
-                <a href="tel:{{ shop.owner.phone_number }}">{{ shop.owner.phone_number }}</a></p>
-            {% if shop.cabinet %}<p class="mb-1 small"><strong>Кабинет:</strong> {{ shop.cabinet }}</p>{% endif %}
-            {% if shop.delivery_price %}<p class="mb-1 small"><strong>Доставка:</strong> {{ "%.2f"|format(shop.delivery_price) }} ₽</p>{% endif %}
-            <p class="mb-0 small"><strong>Рейтинг:</strong>
-                {% if reviews %}{{ "%.1f"|format(shop.rating) }} / 5 ({{ reviews|length }} отзывов)
-                {% else %}нет отзывов{% endif %}
+            {% if shop.description %}<p class="shop-description mb-2">{{ shop.description }}</p>{% endif %}
+            <div class="shop-info">
+            <p class="shop-info-item mb-0">
+                <strong>Владелец:</strong> {{ shop.owner.first_name }} {{ shop.owner.last_name }}
+                {% if shop.owner.class_name %}({{ shop.owner.class_name }}){% endif %}
             </p>
+
+            <p class="shop-info-item mb-0">
+                <strong>Телефон:</strong>
+                <a href="tel:{{ shop.owner.phone_number }}">{{ shop.owner.phone_number }}</a>
+            </p>
+
+            {% if shop.cabinet %}
+            <p class="shop-info-item mb-0">
+                <strong>Кабинет:</strong> {{ shop.cabinet }}
+            </p>
+            {% endif %}
+
+            {% if shop.delivery_price %}
+            <p class="shop-info-item mb-0">
+                <strong>Доставка:</strong> {{ "%.2f"|format(shop.delivery_price) }} ₽
+            </p>
+            {% endif %}
+
+            <p class="shop-info-item mb-0">
+                <strong>Рейтинг:</strong>
+                {% if reviews %}
+                    {{ "%.1f"|format(shop.rating) }} / 5 ({{ reviews|length }} отзывов)
+                {% else %}
+                    нет отзывов
+                {% endif %}
+            </p>
+</div>
         </div>
-        <a href="{{ url_for('showcase') }}" class="btn btn-outline-dark btn-sm">← Назад</a>
+        <a href="{{ url_for('showcase') }}" class="btn btn-sm shop-back-btn">← Назад</a>
     </div>
 </div>
 
-<h4 class="mb-3">Товары</h4>
+<h4 class="shop-section-title">Товары</h4>
 {% if goods_list %}
-<div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
     {% for g in goods_list %}
     <div class="col">
-        <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-                <span class="badge bg-secondary align-self-start mb-2">{{ g.category }}</span>
+    <div class="card shop-product-card h-100">
+        {% if g.image_filename %}
+            <img
+                src="{{ url_for('static', filename='uploads/goods/' ~ g.image_filename) }}"
+                class="shop-product-image"
+                alt="{{ g.name }}"
+                loading="lazy"
+            >
+        {% endif %}
+
+        <div class="card-body d-flex flex-column">
+                <span class="badge shop-category align-self-start mb-2">{{ g.category }}</span>
                 <h5 class="card-title">{{ g.name }}</h5>
                 {% if g.description %}<p class="card-text text-muted small">{{ g.description }}</p>{% endif %}
-                <p class="mb-1"><strong>{{ "%.2f"|format(g.price) }} ₽</strong></p>
-                <p class="text-muted small mb-3">
+                <p class="shop-price mb-1">{{ "%.2f"|format(g.price) }} ₽</p>
+                <p class="text-muted shop-stock mb-3">
                     В наличии: {{ g.quantity }} шт.
                     {% if g.max_bron is not none %}· лимит брони: {{ g.max_bron }} шт.{% endif %}
                 </p>
@@ -61,13 +293,13 @@
 <div class="alert alert-info">Товаров пока нет.</div>
 {% endif %}
 
-<h4 class="mb-3">Отзывы</h4>
+<h4 class="shop-section-title">Отзывы</h4>
 {% if reviews %}
     {% for r in reviews %}
-    <div class="card p-3 mb-2">
+    <div class="shop-reviews">
         <div class="d-flex justify-content-between mb-1">
             <strong>{{ r.student.first_name }} {{ r.student.last_name }}</strong>
-            <span>{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</span>
+            <span class="shop-stars">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</span>
         </div>
         {% if r.comment %}<p class="small mb-0">{{ r.comment }}</p>{% endif %}
         <small class="text-muted">{{ r.created_at.strftime('%d.%m.%Y') }}</small>
@@ -76,4 +308,5 @@
 {% else %}
 <p class="text-muted">Отзывов пока нет.</p>
 {% endif %}
+</div>
 {% endblock %}

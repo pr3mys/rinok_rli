@@ -62,6 +62,7 @@ class Goods(Base):
     shop_id = Column(Integer, ForeignKey("shops.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(200), nullable=False)
     description = Column(Text)
+    image_filename = Column(String(255), nullable=True)
     category = Column(String(20), nullable=False)
     price = Column(Float, nullable=False)
     quantity = Column(Integer, nullable=False, default=0)
